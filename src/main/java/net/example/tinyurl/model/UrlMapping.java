@@ -13,14 +13,24 @@ public class UrlMapping {
     private String originalUrl;
     private int clickCount;
     private LocalDateTime createdAt;
+    private LocalDateTime lastAccessedAt;
 
     public UrlMapping(){
         this.createdAt = LocalDateTime.now();
         this.clickCount = 0;
+        this.lastAccessedAt = LocalDateTime.now();
+    }
+
+    public Long getId(){
+        return this.id;
     }
 
     public String getShortCode() {
         return this.shortCode;
+    }
+
+    public int getClickCount(){
+        return this.clickCount;
     }
 
     public String getOriginalUrl(){
@@ -39,11 +49,7 @@ public class UrlMapping {
         this.clickCount = clickCount;
     }
 
-    public int getClickCount(){
-        return this.clickCount;
-    }
-
-    public Long getId(){
-        return this.id;
+    public void setLastAccessedAt(){
+        this.lastAccessedAt = LocalDateTime.now();
     }
 }

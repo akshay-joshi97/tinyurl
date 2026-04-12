@@ -37,6 +37,7 @@ public class UrlService {
         if(existing.isPresent()) {
             UrlMapping url = existing.get();
             url.setClickCount(url.getClickCount() + 1);
+            url.setLastAccessedAt();
             urlRepository.save(url);
             return url.getOriginalUrl();
         }else{
