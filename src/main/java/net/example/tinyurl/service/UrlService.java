@@ -4,13 +4,17 @@ import net.example.tinyurl.util.Base62Encoder;
 import net.example.tinyurl.model.UrlMapping;
 import net.example.tinyurl.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
 public class UrlService {
     private final UrlRepository urlRepository;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     public UrlService(UrlRepository urlRepository) {
         this.urlRepository = urlRepository;
@@ -33,15 +37,20 @@ public class UrlService {
     }
 
     public String getOriginalUrl(String shortCode){
-        Optional<UrlMapping> existing = urlRepository.findByShortCode(shortCode);
-        if(existing.isPresent()) {
-            UrlMapping url = existing.get();
-            url.setClickCount(url.getClickCount() + 1);
-            url.setLastAccessedAt();
-            urlRepository.save(url);
-            return url.getOriginalUrl();
+        String originalUrl;
+        String cache = redisTemplate.opsForValue().get(shortCode);
+        if(cache != null){
+            originalUrl = cache;
         }else{
-            throw new RuntimeException("Short URL not found");
+            UrlMapping url = urlRepository.findByShortCode(shortCode)
+                    .orElseThrow(() -> new RuntimeException("Short URL not found"));
+            originalUrl = url.getOriginalUrl();
+            redisTemplate.opsForValue().set(shortCode, url.getOriginalUrl());
         }
+        UrlMapping url = urlRepository.findByShortCode(shortCode).orElseThrow();
+        url.setClickCount(url.getClickCount() + 1);
+        url.setLastAccessedAt(LocalDateTime.now());
+        urlRepository.save(url);
+        return originalUrl;
     }
 }

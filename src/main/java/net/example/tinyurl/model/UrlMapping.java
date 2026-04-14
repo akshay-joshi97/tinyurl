@@ -37,6 +37,14 @@ public class UrlMapping {
         return this.originalUrl;
     }
 
+    public LocalDateTime getCreatedAt(){
+        return this.createdAt;
+    }
+
+    public LocalDateTime getLastAccessedAt(){
+        return this.lastAccessedAt;
+    }
+
     public void setOriginalUrl(String originalUrl){
         this.originalUrl = originalUrl;
     }
@@ -49,7 +57,7 @@ public class UrlMapping {
         this.clickCount = clickCount;
     }
 
-    public void setLastAccessedAt(){
-        this.lastAccessedAt = LocalDateTime.now();
+    public void setLastAccessedAt(LocalDateTime dt){
+        this.lastAccessedAt = dt;
     }
 }
