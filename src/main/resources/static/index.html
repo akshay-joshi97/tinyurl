@@ -76,12 +76,12 @@
 </div>
 
 <script>
-    const BASE_URL = "https://tinyurl-2-0.onrender.com";
+    const BASE_URL = "";
 
     async function shortenUrl() {
         const longUrl = document.getElementById("urlInput").value;
 
-        const response = await fetch(BASE_URL + "/shorten", {
+        const response = await fetch("/shorten", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -100,7 +100,7 @@
     async function getStats() {
         const shortCode = prompt("Enter short code:");
 
-        const response = await fetch(BASE_URL + "/stats/" + shortCode);
+        const response = await fetch("/stats/" + shortCode);
         const data = await response.json();
 
         document.getElementById("stats").innerHTML = `
@@ -115,7 +115,7 @@
     }
 
     async function getTopUrls() {
-        const response = await fetch(BASE_URL + "/top");
+        const response = await fetch("/top");
         const data = await response.json();
 
         let html = "<h3>🔥 Top 5 URLs</h3>";
