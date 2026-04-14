@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TinyURL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 500px;
+            margin: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result, .stats, .top {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .card {
+            background: #f9f9f9;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        a {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🔗 TinyURL</h2>
+
+    <input type="text" id="urlInput" placeholder="Enter URL to shorten">
+
+    <br>
+    <button onclick="shortenUrl()">Shorten</button>
+    <button onclick="getStats()">Get Stats</button>
+    <button onclick="getTopUrls()">Top 5</button>
+
+    <div class="result" id="result"></div>
+    <div class="stats" id="stats"></div>
+    <div class="top" id="top"></div>
+</div>
+
+<script>
+    const BASE_URL = "https://tinyurl-2-0.onrender.com";
+
+    async function shortenUrl() {
+        const longUrl = document.getElementById("urlInput").value;
+
+        const response = await fetch(BASE_URL + "/shorten", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ url: longUrl })
+        });
+
+        const shortCode = await response.text();
+
+        document.getElementById("result").innerHTML =
+            `<b>Short URL:</b>
+            <a href="${BASE_URL}/${shortCode}" target="_blank">
+            ${BASE_URL}/${shortCode}</a>`;
+    }
+
+    async function getStats() {
+        const shortCode = prompt("Enter short code:");
+
+        const response = await fetch(BASE_URL + "/stats/" + shortCode);
+        const data = await response.json();
+
+        document.getElementById("stats").innerHTML = `
+            <h3>📊 Stats</h3>
+            <div class="card">
+                <b>Original URL:</b> ${data.originalUrl}<br>
+                <b>Short Code:</b> ${data.shortCode}<br>
+                <b>Clicks:</b> ${data.clickCount}<br>
+                <b>Last Accessed:</b> ${data.lastAccessedAt}
+            </div>
+        `;
+    }
+
+    async function getTopUrls() {
+        const response = await fetch(BASE_URL + "/top");
+        const data = await response.json();
+
+        let html = "<h3>🔥 Top 5 URLs</h3>";
+
+        data.forEach(url => {
+            html += `
+                <div class="card">
+                    <b>Short:</b> ${url.shortCode} <br>
+                    <b>Clicks:</b> ${url.clickCount} <br>
+                    <a href="${url.originalUrl}" target="_blank">${url.originalUrl}</a>
+                </div>
+            `;
+        });
+
+        document.getElementById("top").innerHTML = html;
+    }
+</script>
+
+</body>
+</html>
