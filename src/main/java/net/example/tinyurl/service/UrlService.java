@@ -4,7 +4,7 @@ import net.example.tinyurl.util.Base62Encoder;
 import net.example.tinyurl.model.UrlMapping;
 import net.example.tinyurl.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import java.util.Optional;
 public class UrlService {
     private final UrlRepository urlRepository;
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     public UrlService(UrlRepository urlRepository) {
         this.urlRepository = urlRepository;
